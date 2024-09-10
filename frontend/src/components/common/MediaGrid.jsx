@@ -1,15 +1,27 @@
-import { Grid } from "@mui/material";
+import { Box } from "@mui/material";
 import MediaItem from "./MediaItem";
 
 const MediaGrid = ({ medias, mediaType }) => {
   return (
-    <Grid container spacing={1} sx={{ marginRight: "-8px!important" }}>
+    <Box
+      display="grid"
+      gap={1}
+      sx={{
+       
+        gridTemplateColumns: {
+          xs: "repeat(2, 1fr)",  
+          sm: "repeat(3, 1fr)",
+          md: "repeat(4, 1fr)",  
+          lg: "repeat(5, 1fr)"   
+        },
+      }}
+    >
       {medias.map((media, index) => (
-        <Grid item xs={6} sm={4} md={3} key={index}>
+        <Box key={index}>
           <MediaItem media={media} mediaType={mediaType} />
-        </Grid>
+        </Box>
       ))}
-    </Grid>
+    </Box>
   );
 };
 
