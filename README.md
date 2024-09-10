@@ -9,7 +9,6 @@ Antes de começar, verifique se você atendeu aos seguintes requisitos:
 
 - Node.JS
 - React
-- React
 - MongoDB
 
 ## 🚀 Instalação
@@ -17,12 +16,12 @@ Antes de começar, verifique se você atendeu aos seguintes requisitos:
 1. Clone o repositório:
 
 ```bash
-git clone [https://github.com/gesser0102/node-js-rest-api-leitura-relogio.git](https://github.com/gesser0102/tmdb-fullstack-nodejs-reactjs)
+git clone https://github.com/gesser0102/tmdb-fullstack-nodejs-reactjs
 ```
 2. Navegue até a pasta do projeto:
 
 ```bash
-cd node-js-rest-api-leitura-relogio
+cd tmdb-fullstack-nodejs-reactjs
 ```
 3. Instale as dependências:
 
