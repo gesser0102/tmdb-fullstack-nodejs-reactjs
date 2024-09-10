@@ -1,6 +1,7 @@
 # TMDB Fullstack Application 
 
-> Esta API permite o upload de uma imagem em string Base64 de relógios medidores de utilidades, como água e gás, utilizando a API Gemini Vision para extrair o valor contido no relógio.
+> Aplicação Fullstack que permite fazer requisições na API do TMDB, retornando as medias. 
+> Adicione e Remova filmes da sua lista de favoritos 
 
 ## 💻 Pré-requisitos
 
@@ -16,7 +17,7 @@ Antes de começar, verifique se você atendeu aos seguintes requisitos:
 1. Clone o repositório:
 
 ```bash
-git clone https://github.com/gesser0102/node-js-rest-api-leitura-relogio.git
+git clone [https://github.com/gesser0102/node-js-rest-api-leitura-relogio.git](https://github.com/gesser0102/tmdb-fullstack-nodejs-reactjs)
 ```
 2. Navegue até a pasta do projeto:
 
@@ -27,11 +28,6 @@ cd node-js-rest-api-leitura-relogio
 
 ```bash
 npm install
-```
-4. Construa e execute o contêiner Docker:
-
-```bash
-docker-compose up --build
 ```
 
 ## ☕ Configurando as Variáveis de Ambiente
@@ -44,6 +40,24 @@ PORT=
 TOKEN_SECRET=<JWT>
 BASE_URL=https://api.themoviedb.org/3
 TMDB_KEY=
+```
+
+## 🌍 Configuração dos clients
+
+Certifique-se de alterar a URL dos arquivos privateClient.jsx e publicClient.jsx
+
+```
+const baseURL = "URL_DO_SERVIDOR_DA_SUA_API";
+```
+
+## 💻 Gerando seu Token do JWT (JsonWebTOken)
+
+```
+1 - Abra seu terminal ou prompt de comando.
+
+2 - Execute o seguinte script Node.js para gerar uma string aleatória:
+
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 
