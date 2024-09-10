@@ -1,16 +1,15 @@
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { ListItemButton, ListItemIcon, ListItemText, Menu, Typography } from "@mui/material";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import  menuConfigs  from "../../configs/menu.configs";
+import menuConfigs from "../../configs/menu.configs";
 import { setUser } from "../../redux/userSlice";
 
 const UserMenu = () => {
   const { user } = useSelector((state) => state.user);
-
   const dispatch = useDispatch();
-
   const [anchorEl, setAnchorEl] = useState(null);
 
   const toggleMenu = (e) => setAnchorEl(e.currentTarget);
@@ -21,11 +20,11 @@ const UserMenu = () => {
         <>
           <Typography
             variant="h6"
-            sx={{ cursor: "pointer", userSelect: "none" }}
+            sx={{ cursor: "pointer", userSelect: "none", display: 'flex', alignItems: 'center' }}
             onClick={toggleMenu}
-
           >
             {user.username}
+            <ArrowDropDownIcon sx={{ marginLeft: 1 }} />
           </Typography>
           <Menu
             open={Boolean(anchorEl)}
