@@ -39,10 +39,6 @@ const AuthModal = () => {
         outline: "none"
       }}>
         <Box sx={{ padding: 4, boxShadow: 24, backgroundColor: "background.paper" }}>
-          <Box sx={{ textAlign: "center", marginBottom: "2rem" }}>
-            <Logo />
-          </Box>
-
           {action === actionState.signin && <SigninForm switchAuthState={() => switchAuthState(actionState.signup)} />}
 
           {action === actionState.signup && <SignupForm switchAuthState={() => switchAuthState(actionState.signin)} />}

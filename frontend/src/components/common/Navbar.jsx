@@ -74,7 +74,7 @@ export const NavBar = () => {
                                     variant="contained"
                                     onClick={() => dispatch(setAuthModalOpen(true))}
                                 >
-                                    sign in
+                                    entrar
                                 </Button>
                             )}
                             {user && <UserMenu />}
