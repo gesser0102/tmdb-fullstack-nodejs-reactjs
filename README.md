@@ -3,6 +3,10 @@
 > Aplicação Fullstack que permite fazer requisições na API do TMDB, retornando as medias. 
 > Adicione e Remova filmes da sua lista de favoritos 
 
+## 👀 Preview
+
+https://tmdb-fullstack-nodejs-reactjs-ut47.vercel.app/
+
 ## 💻 Pré-requisitos
 
 Antes de começar, verifique se você atendeu aos seguintes requisitos:
