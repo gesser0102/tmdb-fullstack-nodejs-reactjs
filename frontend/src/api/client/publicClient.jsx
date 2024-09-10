@@ -1,7 +1,7 @@
 import axios from 'axios';
 import queryString from 'query-string';
 
-const baseURL = "http://localhost:5000/api/";
+const baseURL = "https://tmdb-fullstack-nodejs-reactjs.vercel.app/api/";
 
 const publicClient = axios.create({
     baseURL,
