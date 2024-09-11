@@ -15,39 +15,45 @@ import favoriteApi from '../../api/modules/favoriteModule';
 import { addFavorite, removeFavorite } from "../../redux/userSlice";
 import { setAuthModalOpen } from '../../redux/loginModalSlice';
 
+
 const MediaModal = () => {
     const dispatch = useDispatch();
     const { isOpen, mediaId, mediaType } = useSelector((state) => state.mediaModal);
     const [media, setMedia] = useState(null);
     const [genres, setGenres] = useState([]);
     const [isFavorite, setIsFavorite] = useState(false);
-    const [loading, setLoading] = useState(false); 
     const [favoriteLoading, setFavoriteLoading] = useState(false);
     const { user, listFavorites } = useSelector((state) => state.user);
+    const [modalLoading, setModalLoading] = useState(false);
 
     useEffect(() => {
+        setModalLoading(true);
         if (isOpen && mediaId) {
-            setLoading(true);
+            setModalLoading(false);
             const fetchMedia = async () => {
                 const { response } = await mediaApi.getDetail({ mediaType, mediaId });
-                setLoading(false);
+
                 if (response) {
                     setMedia(response);
-                    setIsFavorite(listFavorites.some(fav => fav.mediaId === response.id.toString()));
                     setGenres(response.genres.splice(0, 2));
+                    setIsFavorite(listFavorites.some(fav => fav.mediaId === response.id.toString()));
                 }
             };
+
             fetchMedia();
+
         } else {
+
             setMedia(null);
             setGenres([]);
             setIsFavorite(false);
         }
-    }, [isOpen, mediaId, mediaType, listFavorites]);
+    }, [isOpen, mediaId, mediaType, listFavorites, dispatch]);
 
     const handleClose = () => {
-        if (!favoriteLoading) { 
+        if (!favoriteLoading) {
             dispatch(closeModal());
+            setModalLoading(true);
         }
     };
 
@@ -58,7 +64,8 @@ const MediaModal = () => {
         setFavoriteLoading(true);
 
         if (isFavorite) {
-            onRemoveFavorite(); 
+            await onRemoveFavorite();
+            setModalLoading(false);
         } else {
             const body = {
                 mediaId: media.id,
@@ -70,25 +77,28 @@ const MediaModal = () => {
 
             const { response, err } = await favoriteApi.add(body);
 
+
             if (err) {
                 toast.error(err.message);
-                setFavoriteLoading(false);
+                setModalLoading(false);
             } else if (response) {
                 dispatch(addFavorite(response));
                 setIsFavorite(true);
                 toast.success("Adicionado aos Favoritos");
-                setFavoriteLoading(false);
             }
         }
+
+        setFavoriteLoading(false);
     };
 
     const onRemoveFavorite = async () => {
         if (favoriteLoading) return;
 
+        setModalLoading(false);
         const favorite = listFavorites.find(e => e.mediaId === media.id.toString());
+
         if (!favorite) {
-            toast.error('Favorite not found.');
-            setFavoriteLoading(false);
+            toast.error('Favorite not found.')
             return;
         }
 
@@ -96,14 +106,15 @@ const MediaModal = () => {
 
         if (err) {
             toast.error(err.message);
-            setFavoriteLoading(false);
         } else if (response) {
             dispatch(removeFavorite(favorite));
             setIsFavorite(false);
             toast.success("Removido dos Favoritos");
-            setFavoriteLoading(false);
         }
+
+        setFavoriteLoading(false);
     };
+
 
     return (
         <Modal open={isOpen} onClose={handleClose}>
@@ -115,20 +126,20 @@ const MediaModal = () => {
                 width: { xs: '90%', sm: '80%', md: '70%' },
                 backgroundColor: "background.paper",
                 display: "flex",
-                flexDirection: { xs: 'column', sm: 'row' }, 
+                flexDirection: { xs: 'column', sm: 'row' },
                 outline: "none"
             }}>
-                {loading ? (
-                    <CircularProgress sx={{ margin: "auto" }} />
+                {modalLoading ? (
+                    <CircularProgress sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
                 ) : (
                     media && (
                         <Box sx={{ display: "flex", flexDirection: { xs: 'column', sm: 'row' }, width: '100%' }}>
                             <Box sx={{
-                                width: { xs: '100%', sm: '100%', md: '50%' }, 
+                                width: { xs: '100%', sm: '100%', md: '50%' },
                                 padding: 2,
-                                display: 'flex', 
-                                justifyContent: 'center', 
-                                alignItems: 'center' 
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center'
                             }}>
                                 <Box component="img" src={tmdbConfig.posterPath(media.poster_path || media.backdrop_path)} sx={{ width: { xs: '50%', sm: '100%' }, height: 'auto' }} />
                             </Box>
@@ -162,27 +173,25 @@ const MediaModal = () => {
                                     </Container>
                                 )}
                             </Box>
+                            <Box sx={{ position: { xs: 'relative', sm: 'absolute' }, bottom: 16, right: 16, left: { xs: 10, sm: 'auto' } }}>
+                                <LoadingButton
+                                    variant="text"
+                                    sx={{
+                                        width: "max-content",
+                                        "& .MuiButton-startIcon": { marginRight: "0" }
+                                    }}
+                                    size="large"
+                                    startIcon={isFavorite ? <FavoriteIcon /> : <FavoriteBorderOutlinedIcon />}
+                                    loadingPosition="start"
+                                    loading={favoriteLoading}
+                                    onClick={onFavoriteClick}
+                                    disabled={favoriteLoading}
+                                >
+                                    {isFavorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
+                                </LoadingButton>
+                            </Box>
                         </Box>
                     )
-                )}
-                {!loading && (
-                    <Box sx={{ position: { xs: 'relative', sm: 'absolute' }, bottom: 16, right: 16, left: { xs: 10, sm: 'auto' } }}>
-                        <LoadingButton
-                            variant="text"
-                            sx={{
-                                width: "max-content",
-                                "& .MuiButton-startIcon": { marginRight: "0" }
-                            }}
-                            size="large"
-                            startIcon={isFavorite ? <FavoriteIcon /> : <FavoriteBorderOutlinedIcon />}
-                            loadingPosition="start"
-                            loading={favoriteLoading}
-                            onClick={onFavoriteClick}
-                            disabled={favoriteLoading}
-                        >
-                            {isFavorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
-                        </LoadingButton>
-                    </Box>
                 )}
             </Box>
         </Modal>
