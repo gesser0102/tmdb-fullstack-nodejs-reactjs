@@ -2,14 +2,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { LoadingButton } from "@mui/lab";
 import { Box, Button } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import MediaItem from "../components/common/MediaItem";
 import { muiConfigs } from "../configs/styleConfigs";
 import favoriteApi from "../api/modules/favoriteModule";
-import { setGlobalLoading } from "../redux/globalLoadingSlice";
 import { removeFavorite } from "../redux/userSlice";
-import { toggleModalEnabled } from "../redux/mediaModalSlice";
 
 
 
@@ -72,6 +70,7 @@ export const Favorites = () => {
   const [filteredMedias, setFilteredMedias] = useState([]);
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
+  const favoritesNew = useSelector(state => state.user.listFavorites);
 
   const dispatch = useDispatch();
 
@@ -79,9 +78,9 @@ export const Favorites = () => {
 
   useEffect(() => {
     const getFavorites = async () => {
-      dispatch(setGlobalLoading(true));
+
       const { response, err } = await favoriteApi.getList();
-      dispatch(setGlobalLoading(false));
+
 
 
       if (err) toast.error(err.message);
@@ -93,17 +92,9 @@ export const Favorites = () => {
     };
 
     getFavorites();
-  }, [dispatch]);
+  }, [dispatch, skip, favoritesNew]);
 
-  useEffect(() => {
-    // Desativa a abertura do modal ao entrar nos Favoritos
-    dispatch(toggleModalEnabled(false));
 
-    // Reativa a abertura do modal ao sair dos Favoritos
-    return () => {
-      dispatch(toggleModalEnabled(true));
-    };
-  }, [dispatch]);
 
   const onLoadMore = () => {
 

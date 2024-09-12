@@ -7,7 +7,7 @@ import FilmRate from "./FilmRate";
 import { useDispatch } from "react-redux";
 import { openModal } from "../../redux/mediaModalSlice";
 
-const MediaItem = ({ media, mediaType, disableModal }) => {
+const MediaItem = ({ media, mediaType }) => {
 
 
   const [title, setTitle] = useState("");
@@ -32,7 +32,6 @@ const MediaItem = ({ media, mediaType, disableModal }) => {
   }, [media, mediaType]);
 
   const handleOpenModal = (e) => {
-    if (disableModal) return;
     e.preventDefault();
     e.stopPropagation();
     dispatch(openModal({

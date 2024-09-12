@@ -19,36 +19,32 @@ import { setAuthModalOpen } from '../../redux/loginModalSlice';
 const MediaModal = () => {
     const dispatch = useDispatch();
     const { isOpen, mediaId, mediaType } = useSelector((state) => state.mediaModal);
+    const { user, listFavorites } = useSelector((state) => state.user);
     const [media, setMedia] = useState(null);
     const [genres, setGenres] = useState([]);
     const [isFavorite, setIsFavorite] = useState(false);
     const [favoriteLoading, setFavoriteLoading] = useState(false);
-    const { user, listFavorites } = useSelector((state) => state.user);
-    const [modalLoading, setModalLoading] = useState(false);
+    const [modalLoading, setModalLoading] = useState(true);
 
     useEffect(() => {
-        setModalLoading(true);
         if (isOpen && mediaId) {
-            setModalLoading(false);
             const fetchMedia = async () => {
                 const { response } = await mediaApi.getDetail({ mediaType, mediaId });
-
                 if (response) {
                     setMedia(response);
                     setGenres(response.genres.splice(0, 2));
                     setIsFavorite(listFavorites.some(fav => fav.mediaId === response.id.toString()));
                 }
+                setModalLoading(false);
             };
-
             fetchMedia();
-
         } else {
-
             setMedia(null);
             setGenres([]);
             setIsFavorite(false);
+            setModalLoading(false);
         }
-    }, [isOpen, mediaId, mediaType, listFavorites, dispatch]);
+    }, [isOpen, mediaId, mediaType, listFavorites]);
 
     const handleClose = () => {
         if (!favoriteLoading) {
@@ -57,15 +53,29 @@ const MediaModal = () => {
         }
     };
 
-    const onFavoriteClick = async () => {
+    const toggleFavorite = async () => {
         if (!user) return dispatch(setAuthModalOpen(true));
         if (favoriteLoading) return;
 
         setFavoriteLoading(true);
+        setModalLoading(false);
 
         if (isFavorite) {
-            await onRemoveFavorite();
-            setModalLoading(false);
+            const favorite = listFavorites.find(e => e.mediaId === media.id.toString());
+            if (!favorite) {
+                toast.error('Favorite not found.');
+                setFavoriteLoading(false);
+                return;
+            }
+
+            const { response, err } = await favoriteApi.remove({ favoriteId: favorite._id });
+            if (err) {
+                toast.error(err.message);
+            } else if (response) {
+                dispatch(removeFavorite(favorite));
+                setIsFavorite(false);
+                toast.success("Removido dos Favoritos");
+            }
         } else {
             const body = {
                 mediaId: media.id,
@@ -76,42 +86,14 @@ const MediaModal = () => {
             };
 
             const { response, err } = await favoriteApi.add(body);
-
-
             if (err) {
                 toast.error(err.message);
-                setModalLoading(false);
             } else if (response) {
                 dispatch(addFavorite(response));
                 setIsFavorite(true);
                 toast.success("Adicionado aos Favoritos");
             }
         }
-
-        setFavoriteLoading(false);
-    };
-
-    const onRemoveFavorite = async () => {
-        if (favoriteLoading) return;
-
-        setModalLoading(false);
-        const favorite = listFavorites.find(e => e.mediaId === media.id.toString());
-
-        if (!favorite) {
-            toast.error('Favorite not found.')
-            return;
-        }
-
-        const { response, err } = await favoriteApi.remove({ favoriteId: favorite._id });
-
-        if (err) {
-            toast.error(err.message);
-        } else if (response) {
-            dispatch(removeFavorite(favorite));
-            setIsFavorite(false);
-            toast.success("Removido dos Favoritos");
-        }
-
         setFavoriteLoading(false);
     };
 
@@ -184,7 +166,7 @@ const MediaModal = () => {
                                     startIcon={isFavorite ? <FavoriteIcon /> : <FavoriteBorderOutlinedIcon />}
                                     loadingPosition="start"
                                     loading={favoriteLoading}
-                                    onClick={onFavoriteClick}
+                                    onClick={toggleFavorite}
                                     disabled={favoriteLoading}
                                 >
                                     {isFavorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
