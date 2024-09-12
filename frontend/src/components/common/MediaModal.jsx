@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Box, Typography, Modal, Stack, Chip, CircularProgress } from '@mui/material';
+import { Box, Typography, Modal, Stack, Chip, CircularProgress, IconButton } from '@mui/material';
 import { LoadingButton } from "@mui/lab";
+import CloseIcon from '@mui/icons-material/Close';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import { closeModal } from '../../redux/mediaModalSlice';
@@ -14,7 +15,6 @@ import { toast } from 'react-toastify';
 import favoriteApi from '../../api/modules/favoriteModule';
 import { addFavorite, removeFavorite } from "../../redux/userSlice";
 import { setAuthModalOpen } from '../../redux/loginModalSlice';
-
 
 const MediaModal = () => {
     const dispatch = useDispatch();
@@ -97,7 +97,6 @@ const MediaModal = () => {
         setFavoriteLoading(false);
     };
 
-
     return (
         <Modal open={isOpen} onClose={handleClose}>
             <Box sx={{
@@ -106,16 +105,25 @@ const MediaModal = () => {
                 left: "50%",
                 transform: "translate(-50%, -50%)",
                 width: { xs: '90%', sm: '80%', md: '70%' },
+                maxHeight: "90vh",
                 backgroundColor: "background.paper",
                 display: "flex",
                 flexDirection: { xs: 'column', sm: 'row' },
+                overflowY: "auto",
                 outline: "none"
             }}>
+                <IconButton
+                    sx={{ position: 'absolute', top: 8, right: 8, color: 'grey.500' }}
+                    onClick={handleClose}
+                    aria-label="close"
+                >
+                    <CloseIcon />
+                </IconButton>
                 {modalLoading ? (
                     <CircularProgress sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
                 ) : (
                     media && (
-                        <Box sx={{ display: "flex", flexDirection: { xs: 'column', sm: 'row' }, width: '100%' }}>
+                        <Box sx={{ display: "flex", flexDirection: { xs: 'column', sm: 'row' }, width: '100%', overflow: 'auto' }}>
                             <Box sx={{
                                 width: { xs: '100%', sm: '100%', md: '50%' },
                                 padding: 2,
@@ -182,4 +190,3 @@ const MediaModal = () => {
 };
 
 export default MediaModal;
-
