@@ -114,9 +114,7 @@ export const Favorites = () => {
 
   useEffect(() => {
     const getFavorites = async () => {
-      dispatch(setGlobalLoading(true));
       const { response, err } = await favoriteApi.getList();
-      dispatch(setGlobalLoading(false));
 
       if (err) toast.error(err.message);
       if (response) {
