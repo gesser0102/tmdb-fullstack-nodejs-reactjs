@@ -49,7 +49,7 @@ const MediaItem = ({ media, mediaType }) => {
       "&:hover .media-back-drop": { opacity: 1 },
       color: "primary.contrastText", cursor: "pointer",
     }}>
-      {mediaType !== "people" && (
+      {mediaType  && (
         <>
           <Box className="media-back-drop" sx={{
             opacity: { xs: 1, md: 0 },
