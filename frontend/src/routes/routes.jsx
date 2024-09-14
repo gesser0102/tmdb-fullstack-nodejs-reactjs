@@ -28,7 +28,7 @@ const routes = [
   },
   {
     path: "/favorites/share/:shareToken",
-    element: <SharedFavorites />, // Nova rota para os favoritos compartilhados
+    element: <SharedFavorites />, 
     state: "shareFavorites",
   },
   {
