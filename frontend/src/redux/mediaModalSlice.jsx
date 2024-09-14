@@ -7,7 +7,8 @@ export const mediaModalSlice = createSlice({
     isOpen: false,
     mediaId: null,
     mediaType: null,
-    modalEnabled: true  // Adiciona a capacidade de desabilitar a abertura do modal
+    modalEnabled: true,
+    btnHide: false  // Adiciona a capacidade de desabilitar a abertura do modal
   },
   reducers: {
     openModal: (state, action) => {
@@ -24,10 +25,13 @@ export const mediaModalSlice = createSlice({
     },
     toggleModalEnabled: (state, action) => {
       state.modalEnabled = action.payload;  // Altera a capacidade de abrir o modal
+    },
+    sharedFavorite: (state, action) => {
+      state.btnHide = action.payload.mediaType;
     }
   }
 });
 
-export const { openModal, closeModal, toggleModalEnabled } = mediaModalSlice.actions;
+export const { openModal, closeModal, toggleModalEnabled,sharedFavorite } = mediaModalSlice.actions;
 
 export default mediaModalSlice.reducer;

@@ -1,16 +1,17 @@
 import DeleteIcon from "@mui/icons-material/Delete";
+import ShareIcon from "@mui/icons-material/Share"; // Importa o ícone de compartilhamento
+import ContentCopyIcon from "@mui/icons-material/ContentCopy"; // Ícone para copiar
 import { LoadingButton } from "@mui/lab";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import MediaItem from "../components/common/MediaItem";
 import { muiConfigs } from "../configs/styleConfigs";
 import favoriteApi from "../api/modules/favoriteModule";
+import userApi from "../api/modules/userModule"; // Importa o módulo userApi
 import { removeFavorite } from "../redux/userSlice";
-
-
-
+import { routesGen } from "../routes/routes"
 const FavoriteItem = ({ media, onRemoved }) => {
   const dispatch = useDispatch();
   const [onRequest, setOnRequest] = useState(false);
@@ -58,19 +59,22 @@ const FavoriteItem = ({ media, onRemoved }) => {
         loading={onRequest}
         onClick={onRemove}
       >
-        remover
+        Remover
       </LoadingButton>
     </Box>
   );
 };
-
 
 export const Favorites = () => {
   const [medias, setMedias] = useState([]);
   const [filteredMedias, setFilteredMedias] = useState([]);
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
+  const [shareLink, setShareLink] = useState("");
+  const [openDialog, setOpenDialog] = useState(false);
+  const [generatingLink, setGeneratingLink] = useState(false);
   const favoritesNew = useSelector(state => state.user.listFavorites);
+ 
 
   const dispatch = useDispatch();
 
@@ -80,8 +84,6 @@ export const Favorites = () => {
     const getFavorites = async () => {
 
       const { response, err } = await favoriteApi.getList();
-
-
 
       if (err) toast.error(err.message);
       if (response) {
@@ -94,30 +96,12 @@ export const Favorites = () => {
     getFavorites();
   }, [dispatch, skip, favoritesNew]);
 
-
-
   const onLoadMore = () => {
 
     const newFilteredMedias = [...filteredMedias, ...medias.slice(page * skip, (page + 1) * skip)];
     setFilteredMedias(newFilteredMedias);
     setPage(prevPage => prevPage + 1);
   };
-
-  useEffect(() => {
-    const getFavorites = async () => {
-      const { response, err } = await favoriteApi.getList();
-
-      if (err) toast.error(err.message);
-      if (response) {
-        setCount(response.length);
-        setMedias(response);
-        setFilteredMedias(response.slice(0, skip));
-      }
-    };
-
-    getFavorites();
-  }, [dispatch, skip]);
-
 
   const onRemoved = (id) => {
 
@@ -129,11 +113,44 @@ export const Favorites = () => {
     setCount(prevCount => prevCount - 1);
   };
 
+  // Função para gerar o link de compartilhamento
+  const handleShareFavorites = async () => {
+    setGeneratingLink(true);
+    const { response, err } = await userApi.generateShareLink();
+    setGeneratingLink(false);
+
+    if (err) {
+      toast.error(err.message);
+    } else if (response) {
+      const shareToken = response.shareToken;
+      const link = `${window.location.origin}${routesGen.sharedFavorites(shareToken)}`;
+      setShareLink(link);
+      setOpenDialog(true);
+    }
+  };
+
+  // Função para copiar o link para a área de transferência
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(shareLink);
+    toast.success("Link copiado para a área de transferência!");
+  };
+
   return (
     <Box sx={{ ...muiConfigs.style.mainContent, mt: '5rem', backgroundColor: "#111" }}>
       <Box sx={{ my: 2 }}>
-        <Box component="h2" sx={{ mb: 2 }}>
-          {`Meus Filmes Favoritos (${count})`}
+        {/* Cabeçalho com o título e o botão de compartilhar */}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+          <Box component="h2">
+            {`Meus Filmes Favoritos (${count})`}
+          </Box>
+          <LoadingButton
+            variant="contained"
+            startIcon={<ShareIcon />}
+            loading={generatingLink}
+            onClick={handleShareFavorites}
+          >
+            Compartilhar Favoritos
+          </LoadingButton>
         </Box>
         <Box sx={{
           display: 'flex',
@@ -155,7 +172,28 @@ export const Favorites = () => {
           </Box>
         )}
       </Box>
+
+      {/* Diálogo para exibir o link de compartilhamento */}
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Link de Compartilhamento</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            value={shareLink}
+            InputProps={{
+              readOnly: true,
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button startIcon={<ContentCopyIcon />} onClick={handleCopyLink}>
+            Copiar Link
+          </Button>
+          <Button onClick={() => setOpenDialog(false)}>Fechar</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
 
+export default Favorites;

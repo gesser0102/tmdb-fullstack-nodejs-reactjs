@@ -1,6 +1,7 @@
 import userModel from "../models/userModel.js";
 import jsonwebtoken from "jsonwebtoken";
 import responseHandler from "../handlers/responseHandler.js";
+import crypto from 'crypto';
 
 const signup = async (req, res) => {
   try {
@@ -79,8 +80,36 @@ const getInfo = async (req, res) => {
   }
 };
 
+const generateShareToken = async (req, res) => {
+  try {
+    console.log("Iniciando generateShareToken");
+
+    // Verifique se req.user está definido
+    if (!req.user || !req.user.id) {
+      console.error("Usuário não autenticado");
+      return responseHandler.unauthorized(res);
+    }
+
+    const userId = req.user.id;
+
+    // Gera um token aleatório
+    const shareToken = crypto.randomBytes(16).toString('hex');
+
+    // Atualiza o usuário com o novo token
+    const updatedUser = await userModel.findByIdAndUpdate(userId, { shareToken }, { new: true });
+
+    console.log("Usuário atualizado:", updatedUser);
+
+    responseHandler.ok(res, { shareToken });
+  } catch (error) {
+    console.error("Erro em generateShareToken:", error);
+    responseHandler.error(res);
+  }
+};
+
 export default {
   signup,
   signin,
-  getInfo
+  getInfo,
+  generateShareToken
 };

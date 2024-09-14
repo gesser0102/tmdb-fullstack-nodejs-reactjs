@@ -16,9 +16,10 @@ import favoriteApi from '../../api/modules/favoriteModule';
 import { addFavorite, removeFavorite } from "../../redux/userSlice";
 import { setAuthModalOpen } from '../../redux/loginModalSlice';
 
+
 const MediaModal = () => {
     const dispatch = useDispatch();
-    const { isOpen, mediaId, mediaType } = useSelector((state) => state.mediaModal);
+    const { isOpen, mediaId, mediaType, btnHide } = useSelector((state) => state.mediaModal);
     const { user, listFavorites } = useSelector((state) => state.user);
     const [media, setMedia] = useState(null);
     const [genres, setGenres] = useState([]);
@@ -163,23 +164,25 @@ const MediaModal = () => {
                                     </Container>
                                 )}
                             </Box>
-                            <Box sx={{ position: { xs: 'relative', sm: 'absolute' }, bottom: 16, right: 16, left: { xs: 10, sm: 'auto' } }}>
-                                <LoadingButton
-                                    variant="text"
-                                    sx={{
-                                        width: "max-content",
-                                        "& .MuiButton-startIcon": { marginRight: "0" }
-                                    }}
-                                    size="large"
-                                    startIcon={isFavorite ? <FavoriteIcon /> : <FavoriteBorderOutlinedIcon />}
-                                    loadingPosition="start"
-                                    loading={favoriteLoading}
-                                    onClick={toggleFavorite}
-                                    disabled={favoriteLoading}
-                                >
-                                    {isFavorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
-                                </LoadingButton>
-                            </Box>
+                            {btnHide === false && (
+                                <Box sx={{ position: { xs: 'relative', sm: 'absolute' }, bottom: 16, right: 16, left: { xs: 10, sm: 'auto' } }}>
+                                    <LoadingButton
+                                        variant="text"
+                                        sx={{
+                                            width: "max-content",
+                                            "& .MuiButton-startIcon": { marginRight: "0" }
+                                        }}
+                                        size="large"
+                                        startIcon={isFavorite ? <FavoriteIcon /> : <FavoriteBorderOutlinedIcon />}
+                                        loadingPosition="start"
+                                        loading={favoriteLoading}
+                                        onClick={toggleFavorite}
+                                        disabled={favoriteLoading}
+                                    >
+                                        {isFavorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
+                                    </LoadingButton>
+                                </Box>
+                            )}
                         </Box>
                     )
                 )}

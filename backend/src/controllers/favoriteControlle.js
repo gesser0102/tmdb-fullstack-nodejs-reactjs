@@ -1,5 +1,6 @@
 import responseHandler from "../handlers/responseHandler.js";
 import favoriteModel from "../models/favoriteModel.js";
+import userModel from "../models/userModel.js";
 
 const addFavorite = async (req, res) => {
   try {
@@ -54,4 +55,32 @@ const getFavorites = async (req, res) => {
   }
 };
 
-export default { addFavorite, removeFavorite, getFavorites };
+const getSharedFavorites = async (req, res) => {
+  try {
+    const { shareToken } = req.params;
+
+    // Encontra o usuário pelo token de compartilhamento
+    const user = await userModel.findOne({ shareToken });
+
+    if (!user) return responseHandler.notfound(res);
+
+    // Obtém a lista de favoritos do usuário
+    const favorites = await favoriteModel.find({ user: user._id }).sort("-createdAt");
+
+    // Envia a resposta incluindo o nome de usuário e os favoritos
+    responseHandler.ok(res, {
+      username: user.username,
+      favorites: favorites
+    });
+
+    console.log(user, favorites);
+
+    console.log(favorites, user.username);
+  } catch (error) {
+    console.error("Erro em getSharedFavorites:", error);
+    responseHandler.error(res);
+  }
+};
+
+
+export default { addFavorite, removeFavorite, getFavorites, getSharedFavorites };

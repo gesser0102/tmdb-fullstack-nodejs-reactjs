@@ -46,7 +46,26 @@ const userApi = {
 
       return { response };
     } catch (err) { return { err }; }
-  }
+  },
+
+  generateShareLink: async () => {
+    try {
+      const response = await privateClient.post("/user/generate-share-link");
+      return { response };
+    } catch (err) {
+      return { err };
+    }
+  },
+
+  revokeShareLink: async () => {
+    try {
+      const response = await privateClient.post("/user/revoke-share-link");
+      return { response };
+    } catch (err) {
+      return { err };
+    }
+  },
 };
+
 
 export default userApi;
