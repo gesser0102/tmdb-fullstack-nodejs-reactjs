@@ -1,14 +1,14 @@
 import { HomePage } from "../pages/HomePage";
 import { Favorites } from "../pages/Favorite";
 import { MediaList } from "../pages/Medias";
-import  SharedFavorites  from "../pages/ShareFavorites"; // Importação do componente SharedFavorites
+import  SharedFavorites  from "../pages/ShareFavorites";
 import { Restrict } from "../components/common/Restrict";
 
 export const routesGen = {
   home: "/",
   mediaList: (type) => `/${type}`,
   favoriteList: "/favorites",
-  sharedFavorites: (shareToken) => `/favorites/share/${shareToken}`, // Função para gerar a rota dos favoritos compartilhados
+  sharedFavorites: (shareToken) => `/favorites/share/${shareToken}`,
 };
 
 const routes = [
