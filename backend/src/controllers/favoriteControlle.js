@@ -27,7 +27,6 @@ const addFavorite = async (req, res) => {
 const removeFavorite = async (req, res) => {
   try {
     const { favoriteId } = req.params;
-    console.log(favoriteId);
 
     const favorite = await favoriteModel.findOne({
       user: req.user.id,
@@ -73,11 +72,7 @@ const getSharedFavorites = async (req, res) => {
       favorites: favorites
     });
 
-    console.log(user, favorites);
-
-    console.log(favorites, user.username);
   } catch (error) {
-    console.error("Erro em getSharedFavorites:", error);
     responseHandler.error(res);
   }
 };

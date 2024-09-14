@@ -5,11 +5,9 @@ import crypto from 'crypto';
 
 const signup = async (req, res) => {
   try {
-    console.log("Request body:", req.body);  // Log input data
     const { username, password} = req.body;
 
     const checkUser = await userModel.findOne({ username });
-    console.log("Check user exists:", checkUser);  // Log if user already exists
 
     if (checkUser) return responseHandler.badrequest(res, "username already used");
 
@@ -18,14 +16,12 @@ const signup = async (req, res) => {
     user.setPassword(password);
 
     await user.save();
-    console.log("User saved:", user); 
 
     const token = jsonwebtoken.sign(
       { data: user.id },
       process.env.TOKEN_SECRET,
       { expiresIn: "24h" }
     );
-    console.log("JWT Token:", token); 
 
     responseHandler.created(res, {
       token,
@@ -82,11 +78,9 @@ const getInfo = async (req, res) => {
 
 const generateShareToken = async (req, res) => {
   try {
-    console.log("Iniciando generateShareToken");
 
     // Verifique se req.user está definido
     if (!req.user || !req.user.id) {
-      console.error("Usuário não autenticado");
       return responseHandler.unauthorized(res);
     }
 

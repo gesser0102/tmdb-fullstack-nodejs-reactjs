@@ -29,7 +29,6 @@ const SharedFavorites = () => {
     const getSharedFavorites = async () => {
       try {
         const response = await publicClient.get(`/user/favorites/share/${shareToken}`);
-        console.log(response.user);
         setMedias(response.favorites);
         setUser(response.username);
       } catch (err) {
