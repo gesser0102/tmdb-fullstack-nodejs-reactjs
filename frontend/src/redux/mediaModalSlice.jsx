@@ -1,37 +1,32 @@
-// store/mediaModalSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
-export const mediaModalSlice = createSlice({
+const mediaModalSlice = createSlice({
   name: 'mediaModal',
   initialState: {
     isOpen: false,
     mediaId: null,
     mediaType: null,
-    modalEnabled: true,
-    btnHide: false  // Adiciona a capacidade de desabilitar a abertura do modal
+    btnHide: false,
   },
   reducers: {
-    openModal: (state, action) => {
-      if (state.modalEnabled) {  // Só abre o modal se estiver habilitado
-        state.isOpen = true;
-        state.mediaId = action.payload.mediaId;
-        state.mediaType = action.payload.mediaType;
-      }
+    openModal(state, action) {
+      state.isOpen = true;
+      state.mediaId = action.payload.mediaId;
+      state.mediaType = action.payload.mediaType;
     },
-    closeModal: (state) => {
+    closeModal(state) {
       state.isOpen = false;
       state.mediaId = null;
       state.mediaType = null;
     },
-    toggleModalEnabled: (state, action) => {
-      state.modalEnabled = action.payload;  // Altera a capacidade de abrir o modal
+    enableBtnHide(state) {
+      state.btnHide = true;
     },
-    sharedFavorite: (state, action) => {
-      state.btnHide = action.payload.mediaType;
-    }
-  }
+    disableBtnHide(state) {
+      state.btnHide = false;
+    },
+  },
 });
 
-export const { openModal, closeModal, toggleModalEnabled,sharedFavorite } = mediaModalSlice.actions;
-
+export const { openModal, closeModal, enableBtnHide, disableBtnHide } = mediaModalSlice.actions;
 export default mediaModalSlice.reducer;
