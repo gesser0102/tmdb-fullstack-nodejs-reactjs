@@ -1,6 +1,6 @@
 # TMDB Fullstack Application 
 
-> Aplicação Fullstack que permite fazer requisições na API do TMDB, retornando as medias. 
+> Aplicação Fullstack que permite fazer requisições na API do TMDB, retornando as midias. 
 > Adicione e Remova filmes da sua lista de favoritos 
 
 ## 👀 Preview
